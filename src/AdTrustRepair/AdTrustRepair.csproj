@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+
+    <AssemblyName>AdTrustRepair</AssemblyName>
+    <RootNamespace>AdTrustRepair</RootNamespace>
+    <Version>1.0.0</Version>
+    <FileVersion>1.0.0.0</FileVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <Product>AD Trust Repair</Product>
+    <Description>Диагностика и восстановление доверительных отношений компьютера с доменом Active Directory</Description>
+    <Company>ad-security</Company>
+    <Copyright>MIT License</Copyright>
+
+    <!-- Приложение должно быть self-contained single-file, поэтому отключаем
+         автоматическую генерацию apphost/депенденси-файлов не нужно, но
+         отключаем лишние культуры и PDB для релиза (переопределяется в CI). -->
+    <SatelliteResourceLanguages>ru;en</SatelliteResourceLanguages>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <InvariantGlobalization>false</InvariantGlobalization>
+  </PropertyGroup>
+
+</Project>

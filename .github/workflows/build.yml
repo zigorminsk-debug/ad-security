@@ -1,0 +1,98 @@
+name: Build Windows app
+
+on:
+  push:
+    branches: [ main, "arena/**" ]
+    tags: [ "v*" ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Сборка (win-x64)
+    runs-on: windows-latest
+    outputs:
+      version: ${{ steps.package.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore
+        shell: pwsh
+        run: |
+          dotnet restore src/AdTrustRepair/AdTrustRepair.csproj 2>&1 | Tee-Object -FilePath restore.log
+          if ($LASTEXITCODE -ne 0) {
+            Get-Content restore.log -Tail 20 | ForEach-Object { Write-Host "::error::$_" }
+            exit 1
+          }
+
+      - name: Build
+        shell: pwsh
+        run: |
+          dotnet build src/AdTrustRepair/AdTrustRepair.csproj -c Release --no-restore 2>&1 | Tee-Object -FilePath build.log
+          if ($LASTEXITCODE -ne 0) {
+            Get-Content build.log -Tail 40 | ForEach-Object { Write-Host "::error::$_" }
+            exit 1
+          }
+
+      - name: Publish (self-contained single-file exe)
+        shell: pwsh
+        run: |
+          dotnet publish src/AdTrustRepair/AdTrustRepair.csproj -c Release -r win-x64 --self-contained true `
+            -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true `
+            -p:EnableCompressionInSingleFile=true -p:DebugType=None -p:DebugSymbols=false `
+            -o publish 2>&1 | Tee-Object -FilePath publish.log
+          if ($LASTEXITCODE -ne 0) {
+            Get-Content publish.log -Tail 40 | ForEach-Object { Write-Host "::error::$_" }
+            exit 1
+          }
+
+      - name: Package artifact
+        id: package
+        shell: pwsh
+        run: |
+          $version = if ($env:GITHUB_REF -like 'refs/tags/*') { $env:GITHUB_REF -replace 'refs/tags/','' } else { 'dev' }
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Copy-Item publish/AdTrustRepair.exe dist/
+          Copy-Item README.md dist/README.md
+          Compress-Archive -Path dist/* -DestinationPath "AdTrustRepair-win-x64-$version.zip" -Force
+          Get-Item "AdTrustRepair-win-x64-$version.zip" | Format-List Name,Length
+          "version=$version" >> $env:GITHUB_OUTPUT
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AdTrustRepair-win-x64-${{ steps.package.outputs.version }}
+          path: AdTrustRepair-win-x64-*.zip
+          if-no-files-found: error
+          retention-days: 30
+
+  release:
+    name: Публикация релиза
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: AdTrustRepair-win-x64-${{ needs.build.outputs.version }}
+          path: dist
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: gh release create "${GITHUB_REF_NAME}" dist/*.zip --generate-notes --title "AD Trust Repair ${GITHUB_REF_NAME}"
