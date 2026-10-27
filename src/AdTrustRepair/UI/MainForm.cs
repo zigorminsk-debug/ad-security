@@ -454,9 +454,6 @@ public sealed class MainForm : Form
             : string.Join(Environment.NewLine + Environment.NewLine,
                 report.Recommendations.Select((r, i) => $"{i + 1}. {r}"));
 
-        if (report.Recommendations.Count > 0 && report.OverallStatus == CheckStatus.Error)
-            ShowPage(1);
-
         var toSelect = report.Checks.FirstOrDefault(c => c.Status == CheckStatus.Error)
                        ?? report.Checks.FirstOrDefault(c => c.Status == CheckStatus.Warning)
                        ?? report.Checks.FirstOrDefault();

@@ -165,7 +165,7 @@ public sealed class RepairService
             foreach (var method in new[]
                      {
                          ResetMethod.ResetComputerMachinePassword, ResetMethod.SecureChannelRepair,
-                         ResetMethod.Netdom, ResetMethod.LsaNetUser, ResetMethod.Ksetup
+                         ResetMethod.Netdom, ResetMethod.LsaNetUser
                      })
             {
                 if (!order.Contains(method)) order.Add(method);

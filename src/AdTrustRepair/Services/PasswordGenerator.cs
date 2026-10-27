@@ -1,5 +1,4 @@
 using System.Security.Cryptography;
-using System.Text;
 
 namespace AdTrustRepair.Services;
 
@@ -32,12 +31,4 @@ internal static class PasswordGenerator
 
         return new string(chars);
     }
-
-    public static string Mask(string? secret)
-    {
-        if (string.IsNullOrEmpty(secret)) return "";
-        return new string('•', Math.Min(secret.Length, 24));
-    }
-
-    public static string EncodeUtf8Base64(string text) => Convert.ToBase64String(Encoding.UTF8.GetBytes(text));
 }
