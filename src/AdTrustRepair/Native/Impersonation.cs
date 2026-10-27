@@ -81,8 +81,8 @@ internal sealed class Impersonation : IDisposable
     /// <summary>Без SeDebugPrivilege нельзя открыть токен winlogon.</summary>
     private static void EnableDebugPrivilege()
     {
-        if (!OpenProcessToken(GetCurrentProcess(), TokenAccess.TokenAdjustPrivileges | TokenAccess.TokenQuery,
-                out IntPtr token))
+        if (!NativeMethods.OpenProcessToken(GetCurrentProcess(),
+                TokenAccess.TokenAdjustPrivileges | TokenAccess.TokenQuery, out IntPtr token))
             return;
 
         try
