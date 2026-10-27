@@ -30,21 +30,34 @@ jobs:
           dotnet-version: "8.0.x"
 
       - name: Restore
-        run: dotnet restore src/AdTrustRepair/AdTrustRepair.csproj
+        shell: pwsh
+        run: |
+          dotnet restore src/AdTrustRepair/AdTrustRepair.csproj 2>&1 | Tee-Object -FilePath restore.log
+          if ($LASTEXITCODE -ne 0) {
+            Get-Content restore.log -Tail 20 | ForEach-Object { Write-Host "::error::$_" }
+            exit 1
+          }
 
       - name: Build
-        run: dotnet build src/AdTrustRepair/AdTrustRepair.csproj -c Release --no-restore
+        shell: pwsh
+        run: |
+          dotnet build src/AdTrustRepair/AdTrustRepair.csproj -c Release --no-restore 2>&1 | Tee-Object -FilePath build.log
+          if ($LASTEXITCODE -ne 0) {
+            Get-Content build.log -Tail 40 | ForEach-Object { Write-Host "::error::$_" }
+            exit 1
+          }
 
       - name: Publish (self-contained single-file exe)
-        run: >
-          dotnet publish src/AdTrustRepair/AdTrustRepair.csproj
-          -c Release -r win-x64 --self-contained true
-          -p:PublishSingleFile=true
-          -p:IncludeNativeLibrariesForSelfExtract=true
-          -p:EnableCompressionInSingleFile=true
-          -p:DebugType=None -p:DebugSymbols=false
-          -p:SatelliteResourceLanguages=ru
-          -o publish
+        shell: pwsh
+        run: |
+          dotnet publish src/AdTrustRepair/AdTrustRepair.csproj -c Release -r win-x64 --self-contained true `
+            -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true `
+            -p:EnableCompressionInSingleFile=true -p:DebugType=None -p:DebugSymbols=false `
+            -o publish 2>&1 | Tee-Object -FilePath publish.log
+          if ($LASTEXITCODE -ne 0) {
+            Get-Content publish.log -Tail 40 | ForEach-Object { Write-Host "::error::$_" }
+            exit 1
+          }
 
       - name: Package artifact
         id: package
