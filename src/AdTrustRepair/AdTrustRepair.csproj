@@ -23,15 +23,10 @@
          отключаем лишние культуры и PDB для релиза (переопределяется в CI). -->
     <SatelliteResourceLanguages>ru;en</SatelliteResourceLanguages>
     <ApplicationIcon>app.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <InvariantGlobalization>false</InvariantGlobalization>
   </PropertyGroup>
-
-  <ItemGroup>
-    <!-- Манифест с requireAdministrator -->
-    <None Remove="app.manifest" />
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-  </ItemGroup>
 
 </Project>
