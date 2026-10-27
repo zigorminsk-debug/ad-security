@@ -1,0 +1,13 @@
+# Сборка
+bin/
+obj/
+publish/
+dist/
+*.user
+.vs/
+.idea/
+*.suo
+*.nupkg
+
+# Артефакты
+*.zip
