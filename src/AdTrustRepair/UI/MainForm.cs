@@ -442,7 +442,7 @@ public sealed class MainForm : Form
             : "Контроллер домена не определён";
         _statusCard.Stats = $"Проверок: {report.Checks.Count}   •   " +
                             $"ошибок: {report.Count(CheckStatus.Error)}   •   " +
-                            $"предупреждений: {report.Count(CheckStatus.Warning)}";
+                            $"замечаний: {report.Count(CheckStatus.Warning)}";
         _statusCard.Invalidate();
 
         _header.MachineText = report.IsDomainJoined

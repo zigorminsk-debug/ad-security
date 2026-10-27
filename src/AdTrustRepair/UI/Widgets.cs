@@ -114,7 +114,7 @@ internal sealed class StatusCard : Control
         if (!string.IsNullOrEmpty(Stats))
         {
             y = Math.Min(y + 4, Height - 34);
-            TextRenderer.DrawText(g, Stats, Theme.FontBold, new Rectangle(18, y, Width - 36, 24), Theme.Text,
+            TextRenderer.DrawText(g, Stats, Theme.FontSmall, new Rectangle(18, y, Width - 36, 24), Theme.Text,
                 TextFormatFlags.Left | TextFormatFlags.EndEllipsis);
         }
     }

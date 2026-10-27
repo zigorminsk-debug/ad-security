@@ -46,7 +46,7 @@ public sealed class RepairForm : Form
         Font = Theme.FontBase;
         BackColor = Theme.Bg;
         StartPosition = FormStartPosition.CenterParent;
-        ClientSize = new Size(880, 900);
+        ClientSize = new Size(880, 940);
         MinimumSize = new Size(820, 780);
         ShowInTaskbar = false;
 
@@ -66,7 +66,7 @@ public sealed class RepairForm : Form
             Padding = new Padding(16)
         };
         root.RowStyles.Add(new RowStyle(SizeType.Absolute, 84));
-        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 410));
+        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 466));
         root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
         root.RowStyles.Add(new RowStyle(SizeType.Absolute, 78));
 
