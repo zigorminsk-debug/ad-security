@@ -38,6 +38,7 @@ public sealed class ScanReport
 
     public bool IsDomainJoined { get; set; }
     public string DomainName { get; set; } = "";
+    public string NetBiosDomain { get; set; } = "";
     public string ComputerName { get; set; } = "";
     public string Fqdn { get; set; } = "";
 

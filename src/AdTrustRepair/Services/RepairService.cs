@@ -26,7 +26,9 @@ public sealed class RepairService
         _report = new RepairReport { StartedLocal = DateTime.Now };
         _options = options;
         _domain = scan.DomainName;
-        _netbios = MachineInfo.NormalizeDomainName(scan.DomainName);
+        _netbios = !string.IsNullOrWhiteSpace(scan.NetBiosDomain)
+            ? scan.NetBiosDomain
+            : MachineInfo.NormalizeDomainName(scan.DomainName);
         _computerAccount = (string.IsNullOrWhiteSpace(scan.ComputerName)
             ? MachineInfo.GetIdentity().NetBiosName
             : scan.ComputerName) + "$";

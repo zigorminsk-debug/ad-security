@@ -12,7 +12,8 @@ internal static class ReportWriter
         sb.AppendLine("=====================================");
         sb.AppendLine($"Дата: {report.StartedLocal:yyyy-MM-dd HH:mm:ss}");
         sb.AppendLine($"Компьютер: {report.ComputerName} ({report.Fqdn})");
-        sb.AppendLine($"Домен: {(report.IsDomainJoined ? report.DomainName : "не в домене")}");
+        sb.AppendLine($"Домен: {(report.IsDomainJoined ? report.DomainName : "не в домене")}" +
+                      (report.NetBiosDomain.Length > 0 ? $" (NetBIOS: {report.NetBiosDomain})" : ""));
         sb.AppendLine($"Контроллер домена: {report.DomainController ?? "—"}");
         sb.AppendLine($"Итог: {report.OverallTitle}");
         sb.AppendLine($"Защищённый канал: {FormatBool(report.SecureChannelOk)}");

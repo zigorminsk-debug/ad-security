@@ -46,8 +46,8 @@ public sealed class RepairForm : Form
         Font = Theme.FontBase;
         BackColor = Theme.Bg;
         StartPosition = FormStartPosition.CenterParent;
-        ClientSize = new Size(820, 870);
-        MinimumSize = new Size(740, 700);
+        ClientSize = new Size(880, 900);
+        MinimumSize = new Size(820, 780);
         ShowInTaskbar = false;
 
         BuildLayout();
@@ -66,7 +66,7 @@ public sealed class RepairForm : Form
             Padding = new Padding(16)
         };
         root.RowStyles.Add(new RowStyle(SizeType.Absolute, 84));
-        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 440));
+        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 410));
         root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
         root.RowStyles.Add(new RowStyle(SizeType.Absolute, 78));
 
@@ -90,7 +90,7 @@ public sealed class RepairForm : Form
 
             var icon = new Rectangle(16, 16, 40, 40);
             Theme.FillRounded(g, icon, 20, Theme.WarnBg);
-            TextRenderer.DrawText(g, "!", new Font("Segoe UI Semibold", 16f, FontStyle.Bold), icon, Theme.Warn,
+            TextRenderer.DrawText(g, "!", Theme.FontGlyphWarning, icon, Theme.Warn,
                 TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
 
             TextRenderer.DrawText(g, "Восстановление доверия к домену", Theme.FontH2,

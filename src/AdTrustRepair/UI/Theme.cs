@@ -27,6 +27,10 @@ internal static class Theme
     public static readonly Font FontH1 = new("Segoe UI Semibold", 16f);
     public static readonly Font FontH2 = new("Segoe UI Semibold", 12.5f);
     public static readonly Font FontMono = new("Consolas", 9.25f);
+    public static readonly Font FontLogo = new("Segoe UI Semibold", 15f);
+    public static readonly Font FontGlyphLarge = new("Segoe UI Semibold", 17f, FontStyle.Bold);
+    public static readonly Font FontGlyphMedium = new("Segoe UI Semibold", 10.5f, FontStyle.Bold);
+    public static readonly Font FontGlyphWarning = new("Segoe UI Semibold", 16f, FontStyle.Bold);
 
     /// <summary>Скруглённый прямоугольник (для карточек и «пилюль»).</summary>
     public static GraphicsPath RoundedRect(Rectangle r, int radius)

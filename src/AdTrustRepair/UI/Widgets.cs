@@ -27,7 +27,7 @@ internal sealed class HeaderPanel : Control
 
         var logo = new Rectangle(24, 22, 46, 46);
         Theme.FillRounded(g, logo, 12, Theme.Accent);
-        TextRenderer.DrawText(g, "AD", new Font("Segoe UI Semibold", 15f), logo, Color.White,
+        TextRenderer.DrawText(g, "AD", Theme.FontLogo, logo, Color.White,
             TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
 
         TextRenderer.DrawText(g, Title, Theme.FontH1,
@@ -83,7 +83,7 @@ internal sealed class StatusCard : Control
 
         var icon = new Rectangle(18, 18, 46, 46);
         Theme.FillRounded(g, icon, 23, bg);
-        TextRenderer.DrawText(g, glyph, new Font("Segoe UI Semibold", 17f, FontStyle.Bold), icon, fg,
+        TextRenderer.DrawText(g, glyph, Theme.FontGlyphLarge, icon, fg,
             TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
 
         TextRenderer.DrawText(g, Title, Theme.FontH2,
@@ -159,7 +159,7 @@ internal sealed class CheckRow : Control
 
         var icon = new Rectangle(12, (Height - 30) / 2, 30, 30);
         Theme.FillRounded(g, icon, 15, bg);
-        TextRenderer.DrawText(g, glyph, new Font("Segoe UI Semibold", 10.5f, FontStyle.Bold), icon, fg,
+        TextRenderer.DrawText(g, glyph, Theme.FontGlyphMedium, icon, fg,
             TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
 
         int textWidth = Math.Max(40, Width - 82 - 82);
@@ -215,7 +215,6 @@ internal sealed class SegmentButton : Control
         Width = 136;
         Font = Theme.FontBold;
         Cursor = Cursors.Hand;
-        BackColor = Color.Transparent;
     }
 
     protected override void OnPaint(PaintEventArgs e)

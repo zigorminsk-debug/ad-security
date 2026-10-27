@@ -50,16 +50,24 @@ public sealed class DiagnosticsService
         var (joinStatus, joinName) = MachineInfo.GetJoinInformation();
         bool joined = joinStatus == NetJoinStatus.NetSetupDomainName && joinName.Length > 0;
         report.IsDomainJoined = joined;
+
+        // DNS-имя домена берём из Win32_ComputerSystem (а не из суффикса DNS,
+        // который может быть переопределён), NetBIOS-имя — из NetGetJoinInformation.
+        string adDomain = joined ? await GetAdDnsDomainAsync(cancellationToken) : "";
         report.DomainName = joined
-            ? (string.IsNullOrWhiteSpace(identity.DnsDomain) ? joinName : identity.DnsDomain)
+            ? (!string.IsNullOrWhiteSpace(adDomain) ? adDomain
+                : !string.IsNullOrWhiteSpace(identity.DnsDomain) ? identity.DnsDomain : joinName)
             : (joinStatus == NetJoinStatus.NetSetupWorkgroupName ? joinName : "");
+        report.NetBiosDomain = joined ? joinName : "";
 
         await AddAsync(report, "system", "Домен", "Членство в домене", () =>
         {
             string details =
                 $"Состояние: {DescribeJoinStatus(joinStatus)}\r\n" +
                 $"Имя домена/рабочей группы: {(joinName.Length > 0 ? joinName : "—")}\r\n" +
-                $"DNS-домен компьютера: {(identity.DnsDomain.Length > 0 ? identity.DnsDomain : "—")}\r\n" +
+                $"DNS-имя домена (AD): {(report.DomainName.Length > 0 ? report.DomainName : "—")}\r\n" +
+                $"NetBIOS-имя домена: {(report.NetBiosDomain.Length > 0 ? report.NetBiosDomain : "—")}\r\n" +
+                $"DNS-суффикс компьютера: {(identity.DnsDomain.Length > 0 ? identity.DnsDomain : "—")}\r\n" +
                 $"FQDN: {(identity.Fqdn.Length > 0 ? identity.Fqdn : "—")}";
             return Task.FromResult(joined
                 ? new Outcome(CheckStatus.Ok, $"Компьютер входит в домен {report.DomainName}", details)
@@ -458,6 +466,23 @@ public sealed class DiagnosticsService
         if (ok == null) return (null, $"Не удалось проверить канал ({method}): {message}");
         if (ok == true) return (true, "Доверительные отношения восстановлены, защищённый канал работает.");
         return (false, "Защищённый канал по-прежнему не работает: " + message);
+    }
+
+    private static async Task<string> GetAdDnsDomainAsync(CancellationToken cancellationToken)
+    {
+        const string script = """
+            $out = [ordered]@{}
+            try {
+              $cs = Get-CimInstance -ClassName Win32_ComputerSystem -ErrorAction Stop
+              $out.Domain = $cs.Domain
+              $out.PartOfDomain = [bool]$cs.PartOfDomain
+            } catch { $out.Error = $_.Exception.Message }
+            $out | ConvertTo-Json -Compress
+            """;
+        var res = await ProcessRunner.PowerShellAsync(script, TimeSpan.FromSeconds(45), cancellationToken);
+        var json = ParseJsonObject(res.StdOut);
+        if (json == null) return "";
+        return IsTrue(json, "PartOfDomain") ? GetString(json.Value, "Domain") : "";
     }
 
     private static async Task<(bool Ok, List<string> Targets, string Error)> LookupDcRecordsAsync(

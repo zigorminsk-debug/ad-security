@@ -217,6 +217,8 @@ public sealed class MainForm : Form
         BuildChecksPage();
         BuildTextPage(_pageRecs, _recommendations);
         BuildTextPage(_pageLog, _log);
+        _recommendations.WordWrap = true;
+        _recommendations.ScrollBars = ScrollBars.Vertical;
         _log.Font = Theme.FontMono;
 
         foreach (var page in new[] { _pageChecks, _pageRecs, _pageLog })
@@ -469,7 +471,7 @@ public sealed class MainForm : Form
     {
         var row = new CheckRow();
         row.Bind(check);
-        row.Width = Math.Max(200, _checkList.ClientSize.Width - 26);
+        row.Width = Math.Max(200, _checkList.ClientSize.Width - 30);
         row.Click += (_, _) => SelectCheck(check);
         _checkList.Controls.Add(row);
         _checksAdded++;
@@ -504,7 +506,7 @@ public sealed class MainForm : Form
 
     private void ResizeRows()
     {
-        int width = Math.Max(200, _checkList.ClientSize.Width - 26);
+        int width = Math.Max(200, _checkList.ClientSize.Width - 30);
         foreach (Control control in _checkList.Controls)
             if (control is CheckRow row) row.Width = width;
     }
@@ -516,7 +518,11 @@ public sealed class MainForm : Form
         _progress.MarqueeAnimationSpeed = busy ? 30 : 0;
         _lblProgress.Text = busy ? "Проверка выполняется…" : _lblProgress.Text;
         Cursor = busy ? Cursors.AppStarting : Cursors.Default;
-        if (!busy) _statusCard.Busy = false;
+        if (!busy)
+        {
+            _statusCard.Busy = false;
+            _statusCard.Invalidate();
+        }
     }
 
     // ------------------------------------------------------------------
